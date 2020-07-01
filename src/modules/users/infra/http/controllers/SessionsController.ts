@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
+import { classToClass } from 'class-transformer';
 import AuthenticateUserServices from '@modules/users/services/AuthenticateUserService';
 
 // Controller : Seguindo a metodogolia RESTFULL o controller deve ter no maximo 5 metodos
@@ -15,7 +16,6 @@ export default class SessionsController {
       password,
       email,
     });
-    delete user.password;
-    return response.json({ user, token });
+    return response.json({ user: classToClass(user), token });
   }
 }

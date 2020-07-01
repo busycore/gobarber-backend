@@ -26,7 +26,7 @@ describe('UpdateProfile', () => {
     expect(profile.email).toBe('johndoe@example.com');
   });
 
-  it('should be able to show the profile for nonexistent user', async () => {
+  it('should not be able to show the profile for nonexistent user', async () => {
     await expect(
       showProfileService.execute({
         user_id: 'non-existent-user-id',
