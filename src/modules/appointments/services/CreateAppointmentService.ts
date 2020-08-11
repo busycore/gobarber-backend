@@ -52,6 +52,7 @@ class CreateAppointmentServices {
 
     const findAppointmenttsInSameDate = await this.appointmentsRepository.FindByDate(
       appointmentDate,
+      provider_id,
     );
 
     // Service nao tem acesso a request,response então temos que fazer um throw

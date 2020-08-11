@@ -9,9 +9,12 @@ import '@shared/container';
 import AppError from '@shared/errors/AppError';
 import cors from 'cors';
 import routes from './routes/index';
+import rateLimiter from './middlewares/rateLimiter';
 
 const app = express();
 app.use(cors());
+
+app.use(rateLimiter);
 app.use(express.json());
 app.use('/files', express.static(uploadConfig.uploadsFolder));
 app.use(routes);
