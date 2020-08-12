@@ -77,7 +77,7 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         port: ${{ secrets.SSH_PORT }}
         key: ${{ secrets.SSH_KEY }}
-        script: cd ~/app/gobarber-backend && ./runMigrations.sh
+        script: cd ~/app/gobarber-backend && nohup ./runMigrations.sh &
 
     #Executar açoes na DO via SS
     - name: Restart NODE SERVER(PM2)
