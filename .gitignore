@@ -1,10 +1,14 @@
+
 .idea/
 .vscode/
 .env
-ormconfig.json
+
+tsconfig.bkp
 node_modules/
 build/
 temp/
 tmp/*
 !tmp/.gitkeep
 dist
+
+ormconfig.json
