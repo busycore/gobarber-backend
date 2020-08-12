@@ -58,7 +58,7 @@ jobs:
         source: ".,!node_modules"
         target: "~/app/gobarber-backend"
       
-    #Executar yarn na DO via SSh
+    #Executar scripts de prod e restartar aplicação na DO via SSh
     - name: Install Dependencies on digital Ocean
       uses: appleboy/ssh-action@master
       with:
@@ -69,22 +69,7 @@ jobs:
         script: |
           cd ~/app/gobarber-backend  
           yarn
-
-    - name: RUN MIGRATIONS on digital Ocean
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        port: ${{ secrets.SSH_PORT }}
-        key: ${{ secrets.SSH_KEY }}
-        script: cd ~/app/gobarber-backend && nohup ./runMigrations.sh &
-
-    #Executar açoes na DO via SS
-    - name: Restart NODE SERVER(PM2)
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        port: ${{ secrets.SSH_PORT }}
-        key: ${{ secrets.SSH_KEY }}
-        script: pm2 restart gobarber-api
+          ./node_modules/.bin/typeorm migration:run
+          pm2 restart gobarber-api
+          
+          
