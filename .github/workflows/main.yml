@@ -69,9 +69,8 @@ jobs:
         script: |
           cd ~/app/gobarber-backend  
           yarn
-          
-    #Executar migrations na DO via SSh
-    - name: Run Migrations on digital Ocean
+
+    - name: RUN MIGRATIONS on digital Ocean
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
