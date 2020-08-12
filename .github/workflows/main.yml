@@ -37,13 +37,16 @@ jobs:
         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-yarn-
+          
     #Rodar Yarn e instalar as dependencias(Para buildar)
     - name: Install Deps
       run: yarn
+    
     #Rodar yarn build e buildar
     - name: Run Build
       run: yarn build
     
+    #Transferir o projeto para digital Ocean
     - name: copy Dist to Digital Ocean
       uses: appleboy/scp-action@master
       with:
@@ -51,14 +54,40 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         port: ${{ secrets.SSH_PORT }}
         key: ${{ secrets.SSH_KEY }}
-        source: "."
+        #Copia tudo mas ignora a node_modules(pois fazemos o yarn no servidor)
+        source: ".,!node_modules"
         target: "~/app/gobarber-backend"
       
-    #Rodar Yarn
-    #Executar a Build
-    #Copiar pasta Dist para dentro da vps
-    #substituir o codigo existente para o novo codigo 
-    #rodar Yarn na DO
-    #executar as migrations
-    #restartar o servidor node
+    #Executar yarn na DO via SSh
+    - name: Install Dependencies on digital Ocean
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        port: ${{ secrets.SSH_PORT }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          cd ~/app/gobarber-backend  
+          yarn
+          
+    #Executar migrations na DO via SSh
+    - name: Run Migrations on digital Ocean
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        port: ${{ secrets.SSH_PORT }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          cd ~/app/gobarber-backend  
+          ./node_modules/.bin/typeorm migration:run
 
+    #Executar açoes na DO via SS
+    - name: Restart NODE SERVER(PM2)
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        port: ${{ secrets.SSH_PORT }}
+        key: ${{ secrets.SSH_KEY }}
+        script: pm2 restart gobarber-api
