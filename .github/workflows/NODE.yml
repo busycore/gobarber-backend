@@ -14,16 +14,54 @@ jobs:
 
     runs-on: ubuntu-latest
 
+
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        node-version: [14.x]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+      - name: (CI)Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          languages: javascript
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: (CT) Run Tests & Generate Coverage
+        run: yarn test --coverage
+          
+      - name: Create Results Folder
+        run: mkdir resultados 
+
+      - name: (Security) DevSkim
+        uses: microsoft/DevSkim-Action@v1
+
+      - name: (Security) Insider Action
+        # You may pin to the exact commit or the version.
+        # uses: insidersec/insider-action@6b802340bde4fe834b081de9a961e95992b3c6c5
+        uses: insidersec/insider-action@v0.2.0
+        with:
+          technology: javascript
+          target: src
+
+      - name: (Security) nodejsscan scan
+        id: njsscan
+        uses: ajinabraham/njsscan-action@master
+        with:
+          args: "src --sarif --output resultados/results.sarif || true"
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
+        with:
+          output: resultados
