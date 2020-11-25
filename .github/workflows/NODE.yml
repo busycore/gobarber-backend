@@ -43,6 +43,10 @@ jobs:
 
       - name: (Security) DevSkim
         uses: microsoft/DevSkim-Action@v1
+        with:
+          directory-to-scan: src
+          output-filename: devskim-results.sarif
+          output-directory: resultados
 
       - name: (Security) Insider Action
         # You may pin to the exact commit or the version.
