@@ -40,8 +40,8 @@ jobs:
       - name: Create Results Folder
         run: mkdir resultados 
 
-      # - name: (Security) DevSkim
-      #   uses: microsoft/DevSkim-Action@v1
+      - name: (Security) DevSkim
+        uses: microsoft/DevSkim-Action@v1
 
       - name: (Security) Insider Action
         # You may pin to the exact commit or the version.
