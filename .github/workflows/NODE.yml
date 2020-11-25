@@ -37,9 +37,6 @@ jobs:
 
       - name: Install Dependencies
         run: yarn
-
-      - name: (CT) Run Tests & Generate Coverage
-        run: yarn test --coverage
           
       - name: Create Results Folder
         run: mkdir resultados 
